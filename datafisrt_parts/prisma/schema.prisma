@@ -1,0 +1,383 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlserver"
+  url      = env("DATABASE_URL")
+}
+
+model MigrationHistory {
+  MigrationId    String @db.NVarChar(150)
+  ContextKey     String @db.NVarChar(300)
+  Model          Bytes
+  ProductVersion String @db.NVarChar(32)
+
+  @@id([MigrationId, ContextKey], map: "PK_dbo.__MigrationHistory")
+  @@map("__MigrationHistory")
+}
+
+model DEPARTMENTs {
+  ID            String               @id(map: "PK_dbo.DEPARTMENTs") @default(dbgenerated("newsequentialid()"), map: "DF__DEPARTMENTs__ID__160F4887") @db.UniqueIdentifier
+  CODE          String?              @db.NVarChar(Max)
+  NAME_VN       String?              @db.NVarChar(256)
+  NAME_EN       String?              @db.NVarChar(Max)
+  ADDRESS       String?              @db.NVarChar(256)
+  PHONE_NUMBER  String?              @db.NVarChar(Max)
+  FAX           String?              @db.NVarChar(Max)
+  CREATED_DATE  DateTime?            @db.DateTime
+  CREATED_BY    String?              @db.NVarChar(256)
+  UPDATED_DATE  DateTime?            @db.DateTime
+  UPDATED_BY    String?              @db.NVarChar(256)
+  IS_DELETED    Boolean
+  DELETED_DATE  DateTime?            @db.DateTime
+  DELETED_BY    String?              @db.NVarChar(256)
+  VehicleModels SYS_VEHICLE_MODELS[]
+}
+
+model PAR_COMPONENTS {
+  COM_ID             String    @id(map: "PK_dbo.PAR_COMPONENTS") @default(dbgenerated("newsequentialid()"), map: "DF__PAR_COMPO__COM_I__1FCDBCEB") @db.UniqueIdentifier
+  COM_CODE           String?   @db.VarChar(50)
+  COM_COMID          String?   @db.UniqueIdentifier
+  COM_NAME_EN        String?   @db.VarChar(100)
+  COM_NAME_VN        String?   @db.NVarChar(100)
+  COM_UNIID          String?   @db.UniqueIdentifier
+  COM_NOTE           String?   @db.NVarChar(200)
+  FACTORY            String?   @db.UniqueIdentifier
+  CREATE_DATE        DateTime? @db.DateTime
+  CREATE_BY          String?   @db.NVarChar(256)
+  UPDATE_DATE        DateTime? @db.DateTime
+  UPDATE_BY          String?   @db.NVarChar(256)
+  IS_DELETED         Boolean
+  DELETED_DATE       DateTime? @db.DateTime
+  DELETED_BY         String?   @db.NVarChar(256)
+  COM_SUPPLIER       String?   @db.NVarChar(100)
+  COMPONENT_MODEL_ID String?   @db.UniqueIdentifier
+  START_USING        DateTime? @db.DateTime
+  END_USING          DateTime? @db.DateTime
+  DESCRIPTION        String?   @db.NVarChar(256)
+  VINS               String?   @db.Text
+  VEHICLES           String?   @db.Text
+  Units              SYS_UNITS?    @relation(fields: [COM_UNIID], references: [UNI_ID])
+}
+
+model PAR_PACKAGE_BOMS {
+  PAB_ID         String    @id(map: "PK_dbo.PAR_PACKAGE_BOMS") @default(dbgenerated("newsequentialid()"), map: "DF__PAR_PACKA__PAB_I__22AA2996") @db.UniqueIdentifier
+  PAB_PAGID      String?   @db.UniqueIdentifier
+  PAB_COMID      String?   @db.UniqueIdentifier
+  PAG_QUATITY    String?   @db.VarChar(3)
+  PAB_NOTE       String?   @db.NVarChar(200)
+  FACTORY        String?   @db.UniqueIdentifier
+  CREATE_DATE    DateTime? @db.DateTime
+  CREATE_BY      String?   @db.NVarChar(256)
+  UPDATE_DATE    DateTime? @db.DateTime
+  UPDATE_BY      String?   @db.NVarChar(256)
+  IS_DELETED     Boolean
+  DELETED_DATE   DateTime? @db.DateTime
+  DELETED_BY     String?   @db.NVarChar(256)
+  SVG_ELEMENT_ID String?   @db.NVarChar(Max)
+}
+
+model PAR_PACKAGE_POSITIONS {
+  PAG_ID       String    @id(map: "PK_dbo.PAR_PACKAGE_POSITIONS") @default(dbgenerated("newsequentialid()"), map: "DF__PAR_PACKA__PAG_I__25869641") @db.UniqueIdentifier
+  PAG_CODE     String?   @db.VarChar(50)
+  PAG_PAGID    String?   @db.UniqueIdentifier
+  PAG_NAME_EN  String?   @db.VarChar(100)
+  PAG_NAME_VN  String?   @db.NVarChar(100)
+  PAG_UNIID    String?   @db.UniqueIdentifier
+  PAG_IMAGE    String?   @db.VarChar(500)
+  PAG_NOTE     String?   @db.NVarChar(100)
+  FACTORY      String?   @db.UniqueIdentifier
+  CREATE_DATE  DateTime? @db.DateTime
+  CREATE_BY    String?   @db.NVarChar(256)
+  UPDATE_DATE  DateTime? @db.DateTime
+  UPDATE_BY    String?   @db.NVarChar(256)
+  IS_DELETED   Boolean
+  DELETED_DATE DateTime? @db.DateTime
+  DELETED_BY   String?   @db.NVarChar(256)
+  PAG_SUPPLIER String?   @db.NVarChar(100)
+  VEH_PART_ID  String?   @db.UniqueIdentifier
+  PDF          String?   @db.NVarChar(Max)
+  IS_MAPPED    Boolean   @default(false, map: "DF__PAR_PACKA__IS_MA__3A4CA8FD")
+  Units              SYS_UNITS?    @relation(fields: [PAG_UNIID], references: [UNI_ID])
+}
+
+model PAR_VEHICLE_BOMS {
+  VEB_ID       String        @id(map: "PK_dbo.PAR_VEHICLE_BOMS") @default(dbgenerated("newsequentialid()"), map: "DF__PAR_VEHIC__VEB_I__286302EC") @db.UniqueIdentifier
+  VEB_VEHID    String?       @db.UniqueIdentifier
+  VEB_PAGID    String?       @db.UniqueIdentifier
+  VEB_QUATITY  String?       @db.VarChar(3)
+  VEB_NOTE     String?       @db.NVarChar(200)
+  FACTORY      String?       @db.UniqueIdentifier
+  CREATE_DATE  DateTime?     @db.DateTime
+  CREATE_BY    String?       @db.NVarChar(256)
+  UPDATE_DATE  DateTime?     @db.DateTime
+  UPDATE_BY    String?       @db.NVarChar(256)
+  IS_DELETED   Boolean
+  DELETED_DATE DateTime?     @db.DateTime
+  DELETED_BY   String?       @db.NVarChar(256)
+  VEH_PART_ID  String?       @db.UniqueIdentifier
+  Vehicle      SYS_VEHICLES? @relation(fields: [VEB_VEHID], references: [VEH_ID])
+}
+
+model PART_COMPONENT_MODELS {
+  ID            String    @id(map: "PK_dbo.PART_COMPONENT_MODELS") @default(dbgenerated("newsequentialid()"), map: "DF__PART_COMPONE__ID__1AD3FDA4") @db.UniqueIdentifier
+  CODE          String?   @db.NVarChar(Max)
+  NAME_VN       String?   @db.NVarChar(255)
+  DEPARTMENT_ID String    @db.UniqueIdentifier
+  CREATED_DATE  DateTime? @db.DateTime
+  CREATED_BY    String?   @db.NVarChar(256)
+  UPDATED_DATE  DateTime? @db.DateTime
+  UPDATED_BY    String?   @db.NVarChar(256)
+  IS_DELETED    Boolean
+  DELETED_DATE  DateTime? @db.DateTime
+  DELETED_BY    String?   @db.NVarChar(256)
+  NAME_EN       String?   @db.NVarChar(Max)
+}
+
+model Roles {
+  Id        String      @id(map: "PK_dbo.Roles") @db.NVarChar(128)
+  Name      String      @unique(map: "RoleNameIndex") @db.NVarChar(256)
+  UserRoles UserRoles[]
+}
+
+model SYS_FACTORIES {
+  FAC_ID                   String    @id(map: "PK_dbo.SYS_FACTORIES") @default(dbgenerated("newsequentialid()"), map: "DF__SYS_FACTO__FAC_I__2D27B809") @db.UniqueIdentifier
+  FAC_CODE                 String    @db.VarChar(30)
+  FAC_NAME                 String    @db.NVarChar(100)
+  FAC_TAX                  String?   @db.VarChar(20)
+  FAC_ADDRESS              String?   @db.NVarChar(200)
+  FAC_PHONE                String?   @db.VarChar(24)
+  FAC_FAX                  String?   @db.VarChar(24)
+  FAC_REPRESENTATIVES_NAME String?   @db.NVarChar(100)
+  FAC_CONTACT_NAME         String?   @db.NVarChar(100)
+  FAC_CONTACT_PHONE        String?   @db.VarChar(24)
+  FAC_NOTE                 String?   @db.NVarChar(200)
+  FACTORY                  String?   @db.UniqueIdentifier
+  CREATE_DATE              DateTime? @db.DateTime
+  CREATE_BY                String?   @db.NVarChar(256)
+  UPDATE_DATE              DateTime? @db.DateTime
+  UPDATE_BY                String?   @db.NVarChar(256)
+  IS_DELETED               Boolean
+  DELETED_DATE             DateTime? @db.DateTime
+  DELETED_BY               String?   @db.NVarChar(256)
+}
+
+model SYS_UNITS {
+  UNI_ID       String    @id(map: "PK_dbo.SYS_UNITS") @default(dbgenerated("newsequentialid()"), map: "DF__SYS_UNITS__UNI_I__300424B4") @db.UniqueIdentifier
+  UNI_CODE     String?   @db.VarChar(50)
+  UNI_NAME     String?   @db.NVarChar(100)
+  UNI_NOTE     String?   @db.NVarChar(200)
+  FACTORY      String?   @db.UniqueIdentifier
+  CREATE_DATE  DateTime? @db.DateTime
+  CREATE_BY    String?   @db.NVarChar(256)
+  UPDATE_DATE  DateTime? @db.DateTime
+  UPDATE_BY    String?   @db.NVarChar(256)
+  IS_DELETED   Boolean
+  DELETED_DATE DateTime? @db.DateTime
+  DELETED_BY   String?   @db.NVarChar(256)
+  ParComponent PAR_COMPONENTS[]
+  ParPackageComponent PAR_PACKAGE_POSITIONS[]
+}
+
+model SYS_VEHICLE_CATEGORIES {
+  VEC_ID       String    @id(map: "PK_dbo.SYS_VEHICLE_CATEGORIES") @default(dbgenerated("newsequentialid()"), map: "DF__SYS_VEHIC__VEC_I__35BCFE0A") @db.UniqueIdentifier
+  VEC_CODE     String?   @db.VarChar(50)
+  VEC_NAME     String?   @db.NVarChar(150)
+  VEC_PARENT   String?   @db.UniqueIdentifier
+  VEC_NOTE     String?   @db.NVarChar(200)
+  FACTORY      String?   @db.UniqueIdentifier
+  CREATE_DATE  DateTime? @db.DateTime
+  CREATE_BY    String?   @db.NVarChar(256)
+  UPDATE_DATE  DateTime? @db.DateTime
+  UPDATE_BY    String?   @db.NVarChar(256)
+  IS_DELETED   Boolean
+  DELETED_DATE DateTime? @db.DateTime
+  DELETED_BY   String?   @db.NVarChar(256)
+}
+
+model SYS_VEHICLE_CLASSIFICATIONS {
+  VES_ID       String    @id(map: "PK_dbo.SYS_VEHICLE_CLASSIFICATIONS") @default(dbgenerated("newsequentialid()"), map: "DF__SYS_VEHIC__VES_I__38996AB5") @db.UniqueIdentifier
+  VES_CODE     String?   @db.VarChar(50)
+  VES_NAME     String?   @db.NVarChar(100)
+  VES_PARENT   String?   @db.VarChar(128)
+  VES_VECID    String    @db.UniqueIdentifier
+  VES_NOTE     String?   @db.NVarChar(200)
+  FACTORY      String?   @db.UniqueIdentifier
+  CREATE_DATE  DateTime? @db.DateTime
+  CREATE_BY    String?   @db.NVarChar(256)
+  UPDATE_DATE  DateTime? @db.DateTime
+  UPDATE_BY    String?   @db.NVarChar(256)
+  IS_DELETED   Boolean
+  DELETED_DATE DateTime? @db.DateTime
+  DELETED_BY   String?   @db.NVarChar(256)
+}
+
+model SYS_VEHICLE_MODELS {
+  VEM_ID        String         @id(map: "PK_dbo.SYS_VEHICLE_MODELS") @default(dbgenerated("newsequentialid()"), map: "DF__SYS_VEHIC__VEM_I__3B75D760") @db.UniqueIdentifier
+  VEM_CODE      String?        @db.VarChar(50)
+  VEM_NAME      String?        @db.NVarChar(100)
+  VEM_PARENT    String?        @db.UniqueIdentifier
+  VEM_VECID     String?        @db.UniqueIdentifier
+  VEM_VESID     String?        @db.UniqueIdentifier
+  VEM_NOTE      String?        @db.NVarChar(200)
+  FACTORY       String?        @db.UniqueIdentifier
+  CREATE_DATE   DateTime?      @db.DateTime
+  CREATE_BY     String?        @db.NVarChar(256)
+  UPDATE_DATE   DateTime?      @db.DateTime
+  UPDATE_BY     String?        @db.NVarChar(256)
+  IS_DELETED    Boolean
+  DELETED_DATE  DateTime?      @db.DateTime
+  DELETED_BY    String?        @db.NVarChar(256)
+  DEPARTMENT_ID String         @db.UniqueIdentifier
+  Departments   DEPARTMENTs    @relation(fields: [DEPARTMENT_ID], references: [ID])
+  Vehicles      SYS_VEHICLES[]
+}
+
+model SYS_VEHICLE_PART {
+  ID           String    @id(map: "PK_dbo.SYS_VEHICLE_PART") @default(dbgenerated("newsequentialid()"), map: "DF__SYS_VEHICLE___ID__02FC7413") @db.UniqueIdentifier
+  PART_CODE    String?   @db.NVarChar(128)
+  PART_NAME_VN String?   @db.NVarChar(128)
+  PART_NAME_EN String?   @db.NVarChar(128)
+  VEH_ID       String    @db.UniqueIdentifier
+  CREATED_DATE DateTime? @db.DateTime
+  CREATED_BY   String?   @db.NVarChar(256)
+  UPDATED_DATE DateTime? @db.DateTime
+  UPDATED_BY   String?   @db.NVarChar(256)
+  IS_DELETED   Boolean
+  DELETED_DATE DateTime? @db.DateTime
+  DELETED_BY   String?   @db.NVarChar(256)
+  IMG          String?   @db.NVarChar(Max)
+  ORDER        Int       @default(0, map: "DF__SYS_VEHIC__ORDER__2739D489")
+}
+
+model SYS_VEHICLES {
+  VEH_ID           String             @id(map: "PK_dbo.SYS_VEHICLES") @default(dbgenerated("newsequentialid()"), map: "DF__SYS_VEHIC__VEH_I__32E0915F") @db.UniqueIdentifier
+  VEH_CODE         String?            @db.VarChar(50)
+  VEH_NAME         String?            @db.NVarChar(150)
+  VEH_PART_CATALOG String?            @db.VarChar(50)
+  VEH_VEMID        String             @db.UniqueIdentifier
+  VEH_VSTID        String?            @db.UniqueIdentifier
+  VEH_NOTE         String?            @db.NVarChar(200)
+  FACTORY          String?            @db.UniqueIdentifier
+  CREATE_DATE      DateTime?          @db.DateTime
+  CREATE_BY        String?            @db.NVarChar(256)
+  UPDATE_DATE      DateTime?          @db.DateTime
+  UPDATE_BY        String?            @db.NVarChar(256)
+  IS_DELETED       Boolean
+  DELETED_DATE     DateTime?          @db.DateTime
+  DELETED_BY       String?            @db.NVarChar(256)
+  DEPARTMENT_ID    String             @db.UniqueIdentifier
+  VIN              String?            @db.NVarChar(Max)
+  IS_ACTIVE        Boolean            @default(false, map: "DF__SYS_VEHIC__IS_AC__17F790F9")
+  PDF_CATALOG      String?            @db.NVarChar(Max)
+  PDF_INSTRUCTION  String?            @db.NVarChar(Max)
+  PDF_MAINTENANCE  String?            @db.NVarChar(Max)
+  PICTURE          String?            @db.NVarChar(Max)
+  ID_SEGMENT       String?
+  ParVehicleBoms   PAR_VEHICLE_BOMS[]
+  Segment          SEGMENT?           @relation(fields: [ID_SEGMENT], references: [ID_SEGMENT])
+  VehicleModel     SYS_VEHICLE_MODELS @relation(fields: [VEH_VEMID], references: [VEM_ID])
+}
+
+model sysdiagrams {
+  name         String @db.NVarChar(128)
+  principal_id Int
+  diagram_id   Int    @id(map: "PK__sysdiagr__C2B05B61A1F81938") @default(autoincrement())
+  version      Int?
+  definition   Bytes?
+
+  @@unique([principal_id, name], map: "UK_principal_name")
+}
+
+model USER_MANUALS {
+  ID           String    @id(map: "PK_dbo.USER_MANUALS") @default(dbgenerated("newsequentialid()"), map: "DF__USER_MANUALS__ID__5224328E") @db.UniqueIdentifier
+  TITLE        String?   @db.NVarChar(255)
+  DESCRIPTION  String?   @db.NVarChar(255)
+  VIDEO_URL    String?   @db.VarChar(255)
+  PDF_PATH     String?   @db.NVarChar(255)
+  CREATED_DATE DateTime? @db.DateTime
+  CREATED_BY   String?   @db.NVarChar(256)
+  UPDATED_DATE DateTime? @db.DateTime
+  UPDATED_BY   String?   @db.NVarChar(256)
+  IS_DELETED   Boolean
+  DELETED_DATE DateTime? @db.DateTime
+  DELETED_BY   String?   @db.NVarChar(256)
+}
+
+model USER_PACKAGE_BOMS {
+  ID           String    @id(map: "PK_dbo.USER_PACKAGE_BOMS") @default(dbgenerated("newsequentialid()"), map: "DF__USER_PACKAGE__ID__73BA3083") @db.UniqueIdentifier
+  PAB_ID       String    @db.UniqueIdentifier
+  USER_ID      String?   @db.VarChar(128)
+  NOTE         String?   @db.NVarChar(500)
+  CREATED_DATE DateTime? @db.DateTime
+  CREATED_BY   String?   @db.NVarChar(256)
+  UPDATED_DATE DateTime? @db.DateTime
+  UPDATED_BY   String?   @db.NVarChar(256)
+  IS_DELETED   Boolean
+  DELETED_DATE DateTime? @db.DateTime
+  DELETED_BY   String?   @db.NVarChar(256)
+  QUANTITY     Int       @default(0, map: "DF__USER_PACK__QUANT__282DF8C2")
+}
+
+model UserClaims {
+  Id         Int     @id(map: "PK_dbo.UserClaims") @default(autoincrement())
+  UserId     String  @db.NVarChar(128)
+  ClaimType  String? @db.NVarChar(Max)
+  ClaimValue String? @db.NVarChar(Max)
+  Users      Users   @relation(fields: [UserId], references: [Id], onDelete: Cascade, onUpdate: NoAction, map: "FK_dbo.UserClaims_dbo.Users_UserId")
+
+  @@index([UserId], map: "IX_UserId")
+}
+
+model UserLogins {
+  LoginProvider String @db.NVarChar(128)
+  ProviderKey   String @db.NVarChar(128)
+  UserId        String @db.NVarChar(128)
+  Users         Users  @relation(fields: [UserId], references: [Id], onDelete: Cascade, onUpdate: NoAction, map: "FK_dbo.UserLogins_dbo.Users_UserId")
+
+  @@id([LoginProvider, ProviderKey, UserId], map: "PK_dbo.UserLogins")
+  @@index([UserId], map: "IX_UserId")
+}
+
+model UserRoles {
+  UserId String @db.NVarChar(128)
+  RoleId String @db.NVarChar(128)
+  Roles  Roles  @relation(fields: [RoleId], references: [Id], onDelete: Cascade, onUpdate: NoAction, map: "FK_dbo.UserRoles_dbo.Roles_RoleId")
+  Users  Users  @relation(fields: [UserId], references: [Id], onDelete: Cascade, onUpdate: NoAction, map: "FK_dbo.UserRoles_dbo.Users_UserId")
+
+  @@id([UserId, RoleId], map: "PK_dbo.UserRoles")
+  @@index([RoleId], map: "IX_RoleId")
+  @@index([UserId], map: "IX_UserId")
+}
+
+model Users {
+  Id                   String       @id(map: "PK_dbo.Users") @db.NVarChar(128)
+  Email                String?      @db.NVarChar(256)
+  EmailConfirmed       Boolean?
+  SecurityStamp        String?      @db.NVarChar(Max)
+  PhoneNumber          String?      @db.NVarChar(Max)
+  PhoneNumberConfirmed Boolean?
+  TwoFactorEnabled     Boolean?
+  LockoutEndDateUtc    DateTime?    @db.DateTime
+  LockoutEnabled       Boolean?
+  AccessFailedCount    Int?
+  UserName             String?      @unique(map: "UserNameIndex") @db.NVarChar(256)
+  Address              String?      @db.NVarChar(Max)
+  Note                 String?      @db.NVarChar(Max)
+  Password             String?
+  UserClaims           UserClaims[]
+  UserLogins           UserLogins[]
+  UserRoles            UserRoles[]
+}
+
+model SEGMENT {
+  ID_SEGMENT           String         @id(map: "PK_dbo.SEGMENT")
+  SEG_CODE             String?
+  NAME_VN              String?
+  NAME_EN              String?
+  CREATED_DATE         DateTime?      @db.DateTime
+  TRADEMARK            String?
+  ID_SYS_VEHICLE_MODEL String?        @db.UniqueIdentifier
+  vehicle              SYS_VEHICLES[]
+}
